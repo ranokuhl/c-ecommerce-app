@@ -1,9 +1,21 @@
 const {ApolloServer, gql} = require('apollo-server')
 
+const products = [
+	{
+		id: '1234',
+		name: 'Bike',
+		description: 'Mountain Bike',
+		quantity: 3,
+		price: 99.99,
+		onSale: false,
+	},
+]
+
 const typeDefs = gql`
 	type Query {
 		hello: String
 		products: [Product!]!
+		product(id: ID!): Product
 	}
 
 	type Product {
@@ -20,16 +32,14 @@ const resolvers = {
 		hello: () => {
 			return 'Hello World!'
 		},
-		products: () => {
-			return [
-				{
-					name: 'Bike',
-					description: 'Mountain Bike',
-					quantity: 3,
-					price: 99.99,
-					onSale: false,
-				},
-			]
+
+		product: (parent, args, context) => {
+			const productId = args.id
+
+			const product = products.find(p => p.id === productId)
+
+			if (!product) return null
+			return product
 		},
 	},
 }
